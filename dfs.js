@@ -32,8 +32,8 @@ function makegraph(arr){
         
         for (let j = 0; j <arr[i].length; j++) {
             if((i+1)<arr.length){a.push(arr[i+1][j])}
-            if((j+1)<arr[i].length){a.push(arr[i][j+1])}
             if((i-1)>=0){a.push(arr[i-1][j])}
+            if((j+1)<arr[i].length){a.push(arr[i][j+1])}
             if((j-1)>=0){a.push(arr[i][j-1])}
 
             graph[arr[i][j]]=a
@@ -44,38 +44,26 @@ function makegraph(arr){
   //print(graph)
 }
 
-function bfs(s,e){
-    queue.push(s)
-    visited.push(s)
-    current=1
-    while(queue.length>0){
-      
-        print("queue",queue)
-        if(queue[0]==e){
-          print("done,destination found")
-          return;
-        }else{
-          b=nextlevel(queue[0])
-          queue=queue.concat(b)
-          visited=visited.concat(b)
+function dfs(node,find){
+    
+    if(node==find){
+        visited.push(node)
+        return "Found"
+    }else if(visited.includes(node)){
+        return
+    }else{
+        visited.push(node)
+        print(visited)
+        let now=graph[node]
+        print("neighbors of ",node," are ",now)
+        for(i=0;i<now.length;i++){
+            if(!visited.includes(now[i])){
+                whr=dfs(now[i],find)
+                if(whr=="found") return found;
+            }
         }
-        print(queue[0],"dequeued")
-        queue.shift()
-    }    
-    //print(queue)
-    //print(visited)
-
-}
-function nextlevel(l){
-  let now=graph[l]
-  print("neighbors of ",l," are ",now)
-  a=[]
-  for(i=0;i<now.length;i++){
-    if(!visited.includes(now[i])){
-      a.push(now[i])
     }
-  }
-  return a;
+    return;
 }
 
 
@@ -149,7 +137,7 @@ function pageload() {
 
 function runthis() {
   //print(start,end)
-  bfs(parseInt(start),parseInt(end))
+  dfs(parseInt(start),parseInt(end))
   let cut=visited.length
   for(i=0;i<visited.length;i++){
     if(visited[i]==parseInt(end)){
@@ -159,7 +147,7 @@ function runthis() {
   }
   visited=visited.slice(0, cut+1);
   //print(visited)
-  pushcolor=[]
+  //pushcolor=[]
   state=true;
 }
 
@@ -222,7 +210,7 @@ function draw() {
       }
     }
   }
-  print(pushcolor)
+  //print(pushcolor)
   for (let i = 0; i < col; i++) {
     for (let j = 0; j < row; j++) {
       strokeWeight(ring);
