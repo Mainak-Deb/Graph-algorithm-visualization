@@ -222,7 +222,7 @@ function draw() {
       }
     }
   }
-  //print(pushcolor)
+  print(pushcolor)
   for (let i = 0; i < col; i++) {
     for (let j = 0; j < row; j++) {
       strokeWeight(ring);
