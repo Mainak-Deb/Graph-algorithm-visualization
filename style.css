@@ -1,0 +1,12 @@
+html, body {
+    margin: 0;
+    padding: 0px 4px 0px 8px;
+    background-color: rgb(95, 95, 95);
+  }
+  canvas {
+    display: block;
+  }
+  h2{
+    color: rgb(255, 238, 0);
+  }
+  
