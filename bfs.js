@@ -1,6 +1,6 @@
 let i,j;
 let graph;
-let col=40,row=20;
+let col=10,row=5;
 let names;
 let queue=[],visited=[];
 let start,end;
