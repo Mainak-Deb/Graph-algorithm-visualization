@@ -201,7 +201,7 @@ function draw() {
     for (let j = 0; j < row; j++) {
       strokeWeight(4); 
       if((i+1)<col){
-        if(pushcolor.includes(parseInt(names[i+1][j]))){
+        if((pushcolor.includes(parseInt(names[i+1][j]))) && (pushcolor.includes(parseInt(names[i][j]))) ){
           stroke(252, 3, 11);
         }else{
           stroke(255,255,0);
@@ -211,7 +211,7 @@ function draw() {
         line(nowpos[0],nowpos[1],thenpos[0],thenpos[1])
       }
       if((j+1)<row){
-        if(pushcolor.includes(parseInt(names[i][j+1]))){
+        if((pushcolor.includes(parseInt(names[i][j+1])))  && (pushcolor.includes(parseInt(names[i][j]))) ){
           stroke(252, 3, 11);
         }else{
           stroke(255,255,0);
