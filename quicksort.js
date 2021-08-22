@@ -9,6 +9,7 @@ let linecol=[74, 71, 255,180]
 let finalstates=[]
 let speed=20;
 
+
 function randomise_array(array) {
     array.sort(() => Math.random() - 0.5);
 }
@@ -42,7 +43,7 @@ function compareDecimals(a, b) {
 
 function toogle(){
     //array.sort(compareDecimals)
-    mergeSort(array, 0, array.length - 1)
+    quickSortRecursive(array, 0, array.length - 1)
     if(current){
         makearr(arrsz)
         current=false;
@@ -63,80 +64,45 @@ function changesize(){
     makearr(arrsz)
 }
 
-function merge(arr, l, m, r)
-{
-    var n1 = m - l + 1;
-    var n2 = r - m;
- 
-    // Create temp arrays
-    var L = new Array(n1);
-    var R = new Array(n2);
- 
-    // Copy data to temp arrays L[] and R[]
-    for (var i = 0; i < n1; i++)
-        L[i] = arr[l + i];
-    for (var j = 0; j < n2; j++)
-        R[j] = arr[m + 1 + j];
- 
-    // Merge the temp arrays back into arr[l..r]
- 
-    // Initial index of first subarray
-    var i = 0;
- 
-    // Initial index of second subarray
-    var j = 0;
- 
-    // Initial index of merged subarray
-    var k = l;
- 
-    while (i < n1 && j < n2) {
-        if (L[i] <= R[j]) {
-            arr[k] = L[i];
-            i++;
-        }
-        else {
-            arr[k] = R[j];
-            j++;
-        }
-        k++;
+
+function partition(arr, start, end){
+    // Taking the last element as the pivot
+    const pivotValue = arr[end];
+    let pivotIndex = start; 
+    for (let i = start; i < end; i++) {
+        if (arr[i] < pivotValue) {
+        // Swapping elements
+        [arr[i], arr[pivotIndex]] = [arr[pivotIndex], arr[i]];
+        // Moving to next element
+        pivotIndex++;
         finalstates.push(arr.slice())
+        }
     }
- 
-    // Copy the remaining elements of
-    // L[], if there are any
-    while (i < n1) {
-        arr[k] = L[i];
-        i++;
-        k++;
-    }
- 
-    // Copy the remaining elements of
-    // R[], if there are any
-    while (j < n2) {
-        arr[k] = R[j];
-        j++;
-        k++;
-    }
-    //print(array)
-}
- 
-// l is for left index and r is
-// right index of the sub-array
-// of arr to be sorted */
-function mergeSort(arr,l, r){
-    if(l>=r){
-        return;//returns recursively
-    }
-    var m =l+ parseInt((r-l)/2);
-    mergeSort(arr,l,m);
-    mergeSort(arr,m+1,r);
-    merge(arr,l,m,r);
-    //print(arr)
-    ///finalstates.push(arr.slice())
-    //print(finalstates)
-}
+    
+    // Putting the pivot value in the middle
+    [arr[pivotIndex], arr[end]] = [arr[end], arr[pivotIndex]] 
+    return pivotIndex;
+};
 
 
+function quickSortRecursive(arr, start, end) {
+    // Base case or terminating case
+    if (start >= end) {
+        return;
+    }
+    
+    // Returns pivotIndex
+    let index = partition(arr, start, end);
+    //finalstates.push(arr.slice())
+    print(arr)
+    // Recursively apply the same logic to the left and right subarrays
+    quickSortRecursive(arr, start, index - 1);
+    //finalstates.push(arr.slice())
+    print(arr)
+    quickSortRecursive(arr, index + 1, end);
+    print(arr)
+    //finalstates.push(arr.slice())
+}
 
 
 function inpspeed() {
@@ -144,11 +110,9 @@ function inpspeed() {
     //print(speed)
   }
   
-
-  function pageload() {
+function pageload() {
     location.reload();
   }
-
 
 
 function setup() {
@@ -177,7 +141,6 @@ function setup() {
     speedin = createButton('🏃🏼‍♀️speed%');
     speedin.position(200, 56);
 
-    
     Reload = createButton('🔃Reload');
     Reload.position(500, 56);
     Reload.mousePressed(pageload);
@@ -190,7 +153,7 @@ function draw() {
     rc=width/arrsz
     rh=height-20;
     cell=Math.max(rc,10)
-    print(bg)
+    //print(bg)
     strokeWeight(1); 
     stroke(linecol[0],linecol[1],linecol[2],linecol[3])
     
@@ -210,10 +173,10 @@ function draw() {
         }
         l=0;
     }else{
-        print(l)
+        //print(l)
         //print(finalstates)
         nowstate=finalstates[parseInt(l)]
-        print(nowstate)
+        //print(nowstate)
         if((finalstates.length>0) && (l<finalstates.length)){
             nowstate=finalstates[parseInt(l)]
             for(let i=0;i<arrsz;i++){

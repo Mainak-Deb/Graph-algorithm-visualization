@@ -42,7 +42,7 @@ function compareDecimals(a, b) {
 
 function toogle(){
     //array.sort(compareDecimals)
-    mergeSort(array, 0, array.length - 1)
+   bubbleSort(array)
     if(current){
         makearr(arrsz)
         current=false;
@@ -63,81 +63,33 @@ function changesize(){
     makearr(arrsz)
 }
 
-function merge(arr, l, m, r)
-{
-    var n1 = m - l + 1;
-    var n2 = r - m;
- 
-    // Create temp arrays
-    var L = new Array(n1);
-    var R = new Array(n2);
- 
-    // Copy data to temp arrays L[] and R[]
-    for (var i = 0; i < n1; i++)
-        L[i] = arr[l + i];
-    for (var j = 0; j < n2; j++)
-        R[j] = arr[m + 1 + j];
- 
-    // Merge the temp arrays back into arr[l..r]
- 
-    // Initial index of first subarray
-    var i = 0;
- 
-    // Initial index of second subarray
-    var j = 0;
- 
-    // Initial index of merged subarray
-    var k = l;
- 
-    while (i < n1 && j < n2) {
-        if (L[i] <= R[j]) {
-            arr[k] = L[i];
-            i++;
+// Bubble sort Implementation using Javascript
+  
+  
+// Creating the bblSort function
+function bubbleSort(arr){
+     
+    for(var i = 0; i < arr.length; i++){
+        
+      // Last i elements are already in place  
+      for(var j = 0; j < ( arr.length - i -1 ); j++){
+          
+        // Checking if the item at present iteration 
+        // is greater than the next iteration
+        if(arr[j] > arr[j+1]){
+            
+          // If the condition is true then swap them
+          var temp = arr[j]
+          arr[j] = arr[j + 1]
+          arr[j+1] = temp
+          finalstates.push(arr.slice())
         }
-        else {
-            arr[k] = R[j];
-            j++;
-        }
-        k++;
-        finalstates.push(arr.slice())
+      }
     }
- 
-    // Copy the remaining elements of
-    // L[], if there are any
-    while (i < n1) {
-        arr[k] = L[i];
-        i++;
-        k++;
-    }
- 
-    // Copy the remaining elements of
-    // R[], if there are any
-    while (j < n2) {
-        arr[k] = R[j];
-        j++;
-        k++;
-    }
-    //print(array)
-}
- 
-// l is for left index and r is
-// right index of the sub-array
-// of arr to be sorted */
-function mergeSort(arr,l, r){
-    if(l>=r){
-        return;//returns recursively
-    }
-    var m =l+ parseInt((r-l)/2);
-    mergeSort(arr,l,m);
-    mergeSort(arr,m+1,r);
-    merge(arr,l,m,r);
-    //print(arr)
-    ///finalstates.push(arr.slice())
-    //print(finalstates)
-}
-
-
-
+    // Print the sorted array
+    console.log(arr);
+   }
+     
 
 function inpspeed() {
     speed= this.value();
