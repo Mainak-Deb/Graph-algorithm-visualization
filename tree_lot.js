@@ -1,6 +1,6 @@
 let i,j;
 let graph;
-let level=4;
+let level=6;
 let nodesnum=Math.pow(2,level)-1;
 let names;
 let queue=[],visited=[];
