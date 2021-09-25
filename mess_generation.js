@@ -5,27 +5,24 @@ let mainarr,a,live,justlive;
 let run=false
 let counter=0;
 let bg=255,op=[0,0,0,255]
-let start=[0,0]
-let end=[gw-1,gh-1]
+let start=[1,1]
+let end=[gw-2,gh-2]
 let startdrag=false,enddrag=false;
 let queue=[]
 let pathqueue=[" "]
 let optimalpath;
 let colrarr;
 let nwx,nwy;
-let reversecheck;
 
-function priorityinsert(queue,val){
-    let i=0;
-    print(val)
-    console.log("queue",queue.slice())
-    while((i<queue.length) && (queue[i][1]<val[1])){i++;}
-    queue.splice(i, 0, val);
-    return queue;
-}
-function m_dist(x1,y1,x2,y2){
-  return Math.abs(x1-x2)+Math.abs(y1-y2)
-}
+
+
+
+
+
+
+
+
+
 
 
 function make2DArray(cols, rows) {
@@ -37,7 +34,9 @@ function make2DArray(cols, rows) {
 }
 
 function getgrid(x,y){
+  //print(x,y)
   return [parseInt((x%w)/cell),parseInt((y%h)/cell)]
+  
 }
 
 function setup() {
@@ -48,13 +47,106 @@ function setup() {
   for (let i = 0; i < gw; i++) {
     for (let j = 0; j < gh; j++) {
       mainarr[i][j] =0;
-      colrarr[i][j] =100000;
+      
     }
-    
   }
   // print(mainarr)
   button = createButton('Run🔺');
   button.position(20, 40);
+
+
+  maze = createButton('Maze');
+  maze.position(100, 40);
+  maze.mousePressed(generatemaze);
+
+
+  for (let i = 0; i < gw; i++) {
+    mainarr[i][0] =1; mainarr[i][gh-1] =1;
+  }
+  for (let i = 0; i < gh; i++) {
+    mainarr[0][i] =1; mainarr[gw-1][i] =1;
+  }
+
+
+}
+function shuffle(array) {
+  let currentIndex = array.length,  randomIndex;
+
+  // While there remain elements to shuffle...
+  while (currentIndex != 0) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex], array[currentIndex]];
+  }
+
+  return array;
+}
+
+
+function recursion_maze(x,y){
+  if(!validboundary(x,y)){ return false;}
+  else if(mainarr[x][y]==0){ return false;}
+  else {
+    
+   
+    let a=collectsurround(x,y);
+    
+    let cn=0;
+    for(let i=0;i<a.length;i++){
+      if(mainarr[a[i][0]][a[i][1]]==1){
+        cn++;
+      }
+    }
+    if(cn<3){return false;}
+    mainarr[x][y]=0;
+    console.log(x,y)
+    print(a)
+    print(cn)
+    let cn2=0;
+    a=shuffle(a);
+    print(a)
+    for(let i=0;i<a.length;i++){
+      if(mainarr[a[i][0]][a[i][1]]!=0){
+        // let rn=random(100)
+        
+            recursion_maze(a[i][0],a[i][1]);cn2++;
+          
+      }
+    }
+    if(cn2==0){
+      let bl=recursion_maze(a[0][0],a[0][1]);
+      let i=1;
+      while((!bl) && (i<a.length)){
+        bl=recursion_maze(a[i][0],a[i][1]);i++;
+      }
+      
+    }
+    return true;;
+
+  }
+}
+
+
+
+
+
+function generatemaze(){
+  if(!run){
+    for (let i = 0; i < gw; i++) {
+      for (let j = 0; j < gh; j++) {mainarr[i][j] =1;}
+    }
+
+    recursion_maze(1,1)
+
+
+
+
+  }
 }
 
 function tooglerun() {
@@ -65,10 +157,7 @@ function tooglerun() {
     
   }
   else{ 
-    queue.push([start,0])
-    console.log(m_dist(start[0],start[1],end[0],end[1]))
-    colrarr[start[0]][start[1]]=0;
-    print(queue.slice())
+    queue.push(start)
     run=true;
     bg=50;
     op=[255,255,255,50]
@@ -87,55 +176,50 @@ function validboundary(i,j){
 
 }
 
-function checkneighbour(i,j){
-  let array=[];
-  if(validboundary(i+1,j)){if((mainarr[(i+1)][j]!=1) && (mainarr[(i+1)][j]!=2)  && (mainarr[(i+1)][j]!=3) ){array.push([i+1,j]);colrarr[i+1][j]=Math.min(colrarr[i+1][j],colrarr[i][j]+1);mainarr[i+1][j]=3;}}                                 
-  if(validboundary(i,j+1)){if((mainarr[(i)][j+1]!=1) && (mainarr[(i)][j+1]!=2)  && (mainarr[(i)][j+1]!=3)){array.push([i,j+1]);colrarr[i][j+1]=Math.min(colrarr[i][j+1],colrarr[i][j]+1);mainarr[i][j+1]=3;}}
+function checkneighbour(i,j,p){
+  let array=[],path=[];
+  if(validboundary(i+1,j)){if((mainarr[(i+1)][j]!=1) && (mainarr[(i+1)][j]!=2)  && (mainarr[(i+1)][j]!=3) ){array.push([i+1,j]) ;path.push(p+'r');pathqueue.push(p+'r')}}
+  if(validboundary(i,j+1)){if((mainarr[(i)][j+1]!=1) && (mainarr[(i)][j+1]!=2)  && (mainarr[(i)][j+1]!=3)){array.push([i,j+1]);path.push(p+'d');pathqueue.push(p+'d');}}
   //if(validboundary(i+1,j+1)){if((mainarr[(i+1)][(j+1)]!=1) && (mainarr[(i+1)][(j+1)]!=2) ){array.push([i+1,j+1])}}
   //if(validboundary(i+1,j-1)){if((mainarr[(i+1)][(j-1)]!=1) && (mainarr[(i+1)][(j-1)]!=2) ){array.push([i+1,j-1])}}
 
-  if(validboundary(i-1,j)){if((mainarr[(i-1)][(j)]!=1) && (mainarr[(i-1)][(j)]!=2) && (mainarr[(i-1)][(j)]!=3)){array.push([i-1,j]);colrarr[i-1][j]=Math.min(colrarr[i-1][j],colrarr[i][j]+1);mainarr[i-1][j]=3;}}
-  if(validboundary(i,j-1)){if((mainarr[(i)][(j-1)]!=1) && (mainarr[(i)][(j-1)]!=2) && (mainarr[(i)][(j-1)]!=3)){array.push([i,j-1]);colrarr[i][j-1]=Math.min(colrarr[i][j-1],colrarr[i][j]+1);mainarr[i][j-1]=3;}}
+  if(validboundary(i-1,j)){if((mainarr[(i-1)][(j)]!=1) && (mainarr[(i-1)][(j)]!=2) && (mainarr[(i-1)][(j)]!=3)){array.push([i-1,j]);path.push(p+'l');pathqueue.push(p+'l');}}
+  if(validboundary(i,j-1)){if((mainarr[(i)][(j-1)]!=1) && (mainarr[(i)][(j-1)]!=2) && (mainarr[(i)][(j-1)]!=3)){array.push([i,j-1]);path.push(p+'u');pathqueue.push(p+'u');}}
   //if(validboundary(i-1,j-1)){if((mainarr[(i-1)][(j-1)]!=1) && (mainarr[(i-1)][(j-1)]!=2) ){array.push([i-1,j-1])}}
   //if(validboundary(i-1,j+1)){if((mainarr[(i-1)][(j+1)]!=1) && (mainarr[(i-1)][(j+1)]!=2) ){array.push([i-1,j+1])}}
 
-  //print(colrarr)
+  let m=0;
+  print(path)
+  for(m=0;m<array.length;m++){
+      mainarr[array[m][0]][array[m][1]]=3
+      if((array[m][0]==end[0])&&(array[m][1]==end[1])){
+         isfound=true
+         optimalpath=path[m]
+         print("found")
+         print(optimalpath)
+         nwx=start[0];nwy=start[1]
+         return array;
+         
+      }else{
+        colrarr[array[m][0]][array[m][1]]=path[m].length
+      }
+  }
+  return array;
+}
+
+function collectsurround(i,j){
+  let array=[];
+  if(validboundary(i+1,j)){array.push([i+1,j]) ;}
+  if(validboundary(i,j+1)){array.push([i,j+1]);}
+  if(validboundary(i-1,j)){array.push([i-1,j]);}
+  if(validboundary(i,j-1)){array.push([i,j-1]);}
+ 
   return array;
 }
 
 
-function checkmin(i,j){
-  if((i==start[0]) && (j==start[1]) ) { return [i,j]}
-  let array=[];
-  if(validboundary(i+1,j)){if(mainarr[(i+1)][j]!=1) {array.push([i+1,j]);}}                               
-  if(validboundary(i,j+1)){if(mainarr[(i)][j+1]!=1){array.push([i,j+1]);}}
-  //if(validboundary(i+1,j+1)){if((mainarr[(i+1)][(j+1)]!=1) && (mainarr[(i+1)][(j+1)]!=2) ){array.push([i+1,j+1])}}
-  //if(validboundary(i+1,j-1)){if((mainarr[(i+1)][(j-1)]!=1) && (mainarr[(i+1)][(j-1)]!=2) ){array.push([i+1,j-1])}}
-
-  if(validboundary(i-1,j)){if(mainarr[(i-1)][(j)]!=1){array.push([i-1,j]);}}
-  if(validboundary(i,j-1)){if(mainarr[(i)][(j-1)]!=1){array.push([i,j-1]);}}
-  //if(validboundary(i-1,j-1)){if((mainarr[(i-1)][(j-1)]!=1) && (mainarr[(i-1)][(j-1)]!=2) ){array.push([i-1,j-1])}}
-  //if(validboundary(i-1,j+1)){if((mainarr[(i-1)][(j+1)]!=1) && (mainarr[(i-1)][(j+1)]!=2) ){array.push([i-1,j+1])}}
-
-  //print(colrarr)
-  let minimum=end;
-  print(array)
-  for(let i=0;i<array.length;i++){
-      if(colrarr[minimum[0]][minimum[1]]>colrarr[array[i][0]][array[i][1]]){
-          minimum=array[i]
-      }
-  }
-  print(minimum)
-  print(colrarr[minimum[0]][minimum[1]])
-  return minimum;
-
-}
-
-
-
 let isfound=false
 let incr=0
-
 
 function draw() {
   colorMode(RGB,255);
@@ -149,45 +233,53 @@ function draw() {
     line(0,j,width,j);
   }
   if(!run){
+   
       if (mouseIsPressed) {
         grid=getgrid(mouseX,mouseY)
+        //console.log(grid)
         if((startdrag) || (enddrag)){
             mainarr[grid[0]][grid[1]]=0
         }else{
             mainarr[grid[0]][grid[1]]=1
         }
+        //print(0,justlive,run)
       }
+
+
+
+
   }else{
     if((queue.length>0) && (!isfound)){
-        //print("queue2",queue)
-        if(eqpos(queue[0][0],end)){
+        print("queue",queue)
+        if(eqpos(queue[0],end)){
           print("done,destination found")
-          print(colrarr)
           isfound=true
-          reversecheck=end;
         }else{
-          b=checkneighbour(queue[0][0][0],queue[0][0][1])
-          print(b)
-          queue.shift()
-          for(let i=0;i<b.length;i++){
-            let hval=m_dist(end[0],end[1],b[i][0],b[i][1])
-            let fval=hval+colrarr[b[i][0]][b[i][1]]
-            print(hval)
-            print("queue3",queue.slice())
-            queue=priorityinsert(queue,[b[i],fval])
-          }
-          
-          mainarr[queue[0][0][0]][queue[0][0][1]]=2
+          b=checkneighbour(queue[0][0],queue[0][1],pathqueue[0])
+          print(mainarr)
+          queue=queue.concat(b)
+          mainarr[queue[0][0]][queue[0][1]]=2
           print(queue[0],"dequeued")
         
         }
-        
-       
+        print(pathqueue)
+        queue.shift()
+        pathqueue.shift()
     }else{
-      nb=checkmin(reversecheck[0],reversecheck[1])
-      console.log(end,nb)
-      mainarr[nb[0]][nb[1]]=5;
-      reversecheck=nb;
+      if(incr<optimalpath.length){
+          if(optimalpath[incr]=='l'){
+              nwx--;
+          }else if(optimalpath[incr]=='r'){
+            nwx++;
+          }if(optimalpath[incr]=='u'){
+            nwy--;
+          }if(optimalpath[incr]=='d'){
+            nwy++;
+          }
+          mainarr[nwx][nwy]=5
+
+          incr++;
+      }
     }    
 
   }
