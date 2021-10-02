@@ -5,8 +5,8 @@ let mainarr,a,live,justlive;
 let run=false
 let counter=0;
 let bg=255,op=[0,0,0,255]
-let start=[0,0]
-let end=[gw-1,gh-1]
+let start=[1,1]
+let end=[gw-2,gh-2]
 let startdrag=false,enddrag=false;
 let queue=[]
 let pathqueue=[" "]
@@ -36,6 +36,15 @@ function setup() {
 
   for (let i = 0; i < gw; i++) {
     for (let j = 0; j < gh; j++) {
+      mainarr[i][j] =0;   
+    }
+  }
+  createCanvas(w,h);
+  mainarr=make2DArray(gw,gh)
+  colrarr=make2DArray(gw,gh)
+
+  for (let i = 0; i < gw; i++) {
+    for (let j = 0; j < gh; j++) {
       mainarr[i][j] =0;
       
     }
@@ -45,7 +54,21 @@ function setup() {
   button.position(20, 40);
 
 
+  maze = createButton('Maze');
+  maze.position(100, 40);
+  maze.mousePressed(generatemaze);
+
+
+  for (let i = 0; i < gw; i++) {
+    mainarr[i][0] =1; mainarr[i][gh-1] =1;
+  }
+  for (let i = 0; i < gh; i++) {
+    mainarr[0][i] =1; mainarr[gw-1][i] =1;
+  }
+
 }
+
+
 function tooglerun() {
   if(run){
     run=false;
@@ -60,6 +83,84 @@ function tooglerun() {
     op=[255,255,255,50]
   }
 }
+
+
+
+function recursion_maze(x,y){
+  if(!validboundary(x,y)){ return false;}
+  else if(mainarr[x][y]==0){ return false;}
+  else {  
+    let a=collectsurround(x,y);
+    let cn=0;
+    for(let i=0;i<a.length;i++){
+      if(mainarr[a[i][0]][a[i][1]]==1){
+        cn++;
+      }
+    }
+   
+    if(cn<3){return false;}
+    mainarr[x][y]=0;
+  
+    let cn2=0;
+    a=shuffled(a);
+    
+    for(let i=0;i<a.length;i++){
+      if(mainarr[a[i][0]][a[i][1]]!=0){
+            recursion_maze(a[i][0],a[i][1]);cn2++;
+      }
+    }
+    if(cn2==0){
+      let bl=recursion_maze(a[0][0],a[0][1]);
+      let i=1;
+      while((!bl) && (i<a.length)){
+        bl=recursion_maze(a[i][0],a[i][1]);i++;
+      }
+      
+    }
+    return true;;
+
+  }
+}
+
+function generatemaze(){
+  if(!run){
+    for (let i = 0; i < gw; i++) {
+      for (let j = 0; j < gh; j++) {mainarr[i][j] =1;}
+    }
+    recursion_maze(1,1)
+    mainarr[end[0]][end[1]]=0;
+}
+}
+
+function shuffled(array) {
+  let currentIndex = array.length,  randomIndex;
+
+  // While there remain elements to shuffle...
+  while (currentIndex != 0) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex], array[currentIndex]];
+  }
+
+  return array;
+}
+
+function collectsurround(i,j){
+  let array=[];
+  if(validboundary(i+1,j)){array.push([i+1,j]) ;}
+  if(validboundary(i,j+1)){array.push([i,j+1]);}
+  if(validboundary(i-1,j)){array.push([i-1,j]);}
+  if(validboundary(i,j-1)){array.push([i,j-1]);}
+ 
+  return array;
+}
+
+
 
 function validboundary(i,j){
   let valid=true

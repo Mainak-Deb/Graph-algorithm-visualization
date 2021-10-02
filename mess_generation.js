@@ -15,16 +15,6 @@ let colrarr;
 let nwx,nwy;
 
 
-
-
-
-
-
-
-
-
-
-
 function make2DArray(cols, rows) {
   let arr = new Array(cols);
   for (let i = 0; i < arr.length; i++) {
@@ -69,7 +59,7 @@ function setup() {
 
 
 }
-function shuffle(array) {
+function shuffled(array) {
   let currentIndex = array.length,  randomIndex;
 
   // While there remain elements to shuffle...
@@ -91,25 +81,21 @@ function shuffle(array) {
 function recursion_maze(x,y){
   if(!validboundary(x,y)){ return false;}
   else if(mainarr[x][y]==0){ return false;}
-  else {
-    
-   
+  else {  
     let a=collectsurround(x,y);
-    
     let cn=0;
     for(let i=0;i<a.length;i++){
       if(mainarr[a[i][0]][a[i][1]]==1){
         cn++;
       }
     }
+   
     if(cn<3){return false;}
     mainarr[x][y]=0;
-    console.log(x,y)
-    print(a)
-    print(cn)
+  
     let cn2=0;
-    a=shuffle(a);
-    print(a)
+    a=shuffled(a);
+    
     for(let i=0;i<a.length;i++){
       if(mainarr[a[i][0]][a[i][1]]!=0){
         // let rn=random(100)
@@ -142,7 +128,9 @@ function generatemaze(){
     }
 
     recursion_maze(1,1)
+    mainarr[end[0]][end[1]]=0;
 
+  
 
 
 
